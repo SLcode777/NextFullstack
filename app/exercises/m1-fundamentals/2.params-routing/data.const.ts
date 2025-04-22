@@ -14,4 +14,9 @@ export const PAGES = [
     url: "https://tanstack.com/query",
     description: "React Query is a library for managing server state in React",
   },
+  {
+    slug: "notfound-test",
+    url: "https://naersfeszfqsef.com/",
+    description: "ceci est un test",
+  },
 ];

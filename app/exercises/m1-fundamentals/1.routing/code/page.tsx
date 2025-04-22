@@ -32,7 +32,7 @@ export default async function RoutePage(props: {
       </a>
       <a
         className={buttonVariants({ variant: "outline" })}
-        href={`${currentUrl}?wait=1&error=true`}
+        href={`${currentUrl}?wait=5&error=true`}
       >
         Add loading then error
       </a>
