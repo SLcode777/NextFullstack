@@ -6,7 +6,7 @@ export default function NotFound() {
     <Card>
       <CardHeader className="flex items-center gap-2">
         <Rabbit size={32} />
-        <CardTitle>Sorry, page not found 🥲</CardTitle>
+        <CardTitle>Sorry, page not found... :(</CardTitle>
       </CardHeader>
     </Card>
   );
