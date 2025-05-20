@@ -2,19 +2,23 @@
 
 import { LoadingButton } from "@/components/form/loading-button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAction } from "next-safe-action/hooks";
 import { useRouter } from "next/navigation";
+import { Label } from "recharts";
 import { toast } from "sonner";
-import { createProjectAction } from "./project.action";
+import { editProjectAction } from "./project.action";
 
-export const CreateProjectForm = async () => {
+export const EditProjectForm = async ({
+  params,
+}: {
+  params: { projectId: string };
+}) => {
   const router = useRouter();
 
-  const { execute, isPending } = useAction(createProjectAction, {
+  const { execute, isPending } = useAction(editProjectAction, {
     onSuccess: () => {
-      toast.success("Project created");
+      toast.success("Project updated");
       router.refresh();
     },
     onError: (error) => {
@@ -22,42 +26,39 @@ export const CreateProjectForm = async () => {
     },
   });
 
-  const createProject = (formData: FormData) => {
+  const editProject = (formData: FormData) => {
     "use server";
 
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
+    const id = params.projectId;
 
     execute({
       name,
       description,
+      id,
     });
   };
 
   return (
-    <form action={createProject} className="space-y-4">
+    <form action={editProject} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="name">Project Name</Label>
-        <Input
-          id="name"
-          name="name"
-          placeholder="Enter project name"
-          required
-        />
+        <Input id="name" name="name" value={""} required />
       </div>
       <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"
           name="description"
-          placeholder="Describe your project"
+          value="description"
           className="min-h-[100px]"
           required
         />
       </div>
 
       <LoadingButton forceLoading={isPending} type="submit" className="w-full">
-        Create Project
+        `Update Project`
       </LoadingButton>
     </form>
   );

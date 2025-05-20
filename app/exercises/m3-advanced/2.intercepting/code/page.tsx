@@ -23,7 +23,7 @@ export default async function ProjectsPage() {
           <ProjectCard key={project.id} {...project} currentUrl={currentUrl} />
         ))}
 
-        <Link href={`/exercises/m3-advanced/2.intercepting/code/not-found-id`}>
+        <Link href={`/exercises/m3-advanced/2.intercepting/final/not-found-id`}>
           Not found
         </Link>
       </div>

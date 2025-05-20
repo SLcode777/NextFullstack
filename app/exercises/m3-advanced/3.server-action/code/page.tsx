@@ -1,6 +1,5 @@
 import { ProjectCard } from "@/components/features/projects/project-card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,15 +7,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { getRequiredUser } from "@/lib/auth-session";
+import { getCurrentExerciseUrl } from "@/lib/current-exercises-url";
+import { prisma } from "@/lib/prisma";
 import { AlertCircle, ClipboardList, PlusCircle } from "lucide-react";
+import { CreateProjectForm } from "../final-5/create-project-form";
 
-export default async function ProjectsPage() {
-  // 🦁 Remplace pour récupérer la liste des projets
-  const projects = [] as { id: string; name: string; description: string }[];
+export default async function ProjectDetailsPage() {
+  const user = await getRequiredUser();
+  const projects = await prisma.project.findMany({
+    where: {
+      userId: user.id,
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      tasks: true,
+    },
+  });
 
   const currentUrl = await getCurrentExerciseUrl();
+  console.log(currentUrl);
 
   return (
     <div className="space-y-6">
@@ -58,36 +70,10 @@ export default async function ProjectsPage() {
             <PlusCircle className="h-5 w-5 text-primary" />
             <CardTitle>Create New Project</CardTitle>
           </div>
+          <div>user : {user.name}</div>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <label htmlFor="name" className="text-sm font-medium">
-                Project Name
-              </label>
-              <Input
-                id="name"
-                name="name"
-                placeholder="Enter project name"
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label htmlFor="description" className="text-sm font-medium">
-                Description
-              </label>
-              <Textarea
-                id="description"
-                name="description"
-                placeholder="Describe your project"
-                className="min-h-[100px]"
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Create Project
-            </Button>
-          </div>
+          <CreateProjectForm />
         </CardContent>
       </Card>
     </div>

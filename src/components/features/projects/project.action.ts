@@ -21,3 +21,29 @@ export const createProjectAction = userAction
 
     return project;
   });
+
+export const editProjectAction = userAction
+  .schema(
+    z.object({
+      id: z.string(),
+      name: z.string().min(1),
+      description: z.string().min(1),
+    })
+  )
+  .action(async ({ parsedInput, ctx }) => {
+    const { name, description, id } = parsedInput;
+    const user = ctx.user;
+
+    const updatedProject = await prisma.project.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name: name,
+        description: description,
+        userId: user.id,
+      },
+    });
+
+    return updatedProject;
+  });
