@@ -1,4 +1,5 @@
 import { ProjectCard } from "@/components/features/projects/project-card";
+import { LoadingButton } from "@/components/form/loading-button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
@@ -7,14 +8,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { getRequiredUser } from "@/lib/auth-session";
 import { getCurrentExerciseUrl } from "@/lib/current-exercises-url";
 import { prisma } from "@/lib/prisma";
 import { AlertCircle, ClipboardList, PlusCircle } from "lucide-react";
-import { CreateProjectForm } from "../final-5/create-project-form";
+import { revalidatePath } from "next/cache";
 
-export default async function ProjectDetailsPage() {
+export default async function ProjectsPage() {
   const user = await getRequiredUser();
+
   const projects = await prisma.project.findMany({
     where: {
       userId: user.id,
@@ -73,7 +77,49 @@ export default async function ProjectDetailsPage() {
           <div>user : {user.name}</div>
         </CardHeader>
         <CardContent>
-          <CreateProjectForm />
+          <form
+            action={async (formData) => {
+              "use server";
+              const name = formData.get("name") as string;
+              const description = formData.get("description") as string;
+              await prisma.project.create({
+                data: {
+                  name: name,
+                  description: description,
+                  userId: user.id,
+                },
+              });
+              revalidatePath(currentUrl);
+            }}
+          >
+            <div className="space-y-2">
+              <label htmlFor="name">Project Name</label>
+              <Input
+                id="name"
+                name="name"
+                placeholder="Enter project name"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="description">Description</label>
+              <Textarea
+                id="description"
+                name="description"
+                placeholder="Describe your project"
+                className="min-h-[100px]"
+                required
+              />
+            </div>
+
+            <LoadingButton
+              // forceLoading={isPending}
+              type="submit"
+              className="w-full"
+            >
+              Create Project
+            </LoadingButton>
+          </form>
         </CardContent>
       </Card>
     </div>
