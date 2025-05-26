@@ -1,5 +1,5 @@
-// import { EditProjectForm } from "@/components/features/projects/edit-project-form";
 import { UpdateProjectForm } from "@/components/features/projects/project-edition-form";
+import { TaskList } from "@/components/features/projects/task-list-server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getRequiredUser } from "@/lib/auth-session";
 import { getCurrentExerciseUrl } from "@/lib/current-exercises-url";
@@ -32,6 +32,8 @@ export default async function ProjectDetailsPage(props: {
     return <p>Project not found</p>;
   }
 
+  console.log("project id :", project.id);
+
   return (
     <div className=" space-y-8">
       <Card className="space-y-6 px-2 flex flex-col gap-2">
@@ -44,6 +46,7 @@ export default async function ProjectDetailsPage(props: {
           </div>
         </CardHeader>
       </Card>
+      <TaskList projectId={project.id} currentUrl={currentUrl} />
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">

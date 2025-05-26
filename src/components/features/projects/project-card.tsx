@@ -1,5 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
+import { MyLoadingButton } from "./my-loading-button";
+import { deleteProjectAction } from "./project.action";
 
 interface ProjectCardProps {
   id: string;
@@ -15,13 +17,22 @@ export function ProjectCard({
   currentUrl,
 }: ProjectCardProps) {
   return (
-    <Link href={`${currentUrl}/projects/${id}`} className="flex-1">
+    <form action={deleteProjectAction}>
+      <input type="hidden" name="projectId" value={id} />
+      <input type="hidden" name="currentUrl" value={currentUrl} />
       <Card className="border-l-4 border-l-muted rounded-l-none hover:bg-muted/50 transition-colors">
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-lg">{name}</h3>
-          <p className="text-sm text-muted-foreground mt-1">{description}</p>
+        <CardContent className="p-4 flex flex-row justify-between items-center">
+          <Link href={`${currentUrl}/projects/${id}`} className="flex-1">
+            <div className="">
+              <h3 className="font-semibold text-lg">{name}</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {description}
+              </p>
+            </div>
+          </Link>
+          <MyLoadingButton loadingText="Suppression...">X</MyLoadingButton>
         </CardContent>
       </Card>
-    </Link>
+    </form>
   );
 }

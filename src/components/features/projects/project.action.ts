@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { userAction } from "@/lib/safe-actions";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export const createProjectAction = userAction
@@ -22,29 +23,18 @@ export const createProjectAction = userAction
     return project;
   });
 
-// export const editProjectAction = userAction
-//   .schema(
-//     z.object({
-//       id: z.string(),
-//       name: z.string().min(1),
-//       description: z.string().min(1),
-//     })
-//   )
-//   .action(async ({ parsedInput, ctx }) => {
-//     const { name, description, id } = parsedInput;
-//     const user = ctx.user;
+export async function deleteProjectAction(formData: FormData) {
+  const currentUrl = formData.get("currentUrl") as string;
+  const projectId = formData.get("projectId") as string;
+  if (!projectId) throw new Error("ID de projet manquant");
 
-//     const updatedProject = await prisma.project.update({
-//       where: {
-//         id: id,
-//       },
-//       data: {
-//         name: name,
-//         description: description,
-//         userId: user.id,
-//       },
-//     });
+  await prisma.project.delete({
+    where: { id: projectId },
+  });
 
-//     return updatedProject;
-//   });
-
+  if (currentUrl) {
+    revalidatePath(currentUrl);
+  } else {
+    revalidatePath("/");
+  }
+}

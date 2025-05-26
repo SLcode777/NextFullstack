@@ -1,5 +1,5 @@
+import { MyLoadingButton } from "@/components/features/projects/my-loading-button";
 import { ProjectCard } from "@/components/features/projects/project-card";
-import { LoadingButton } from "@/components/form/loading-button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getRequiredUser } from "@/lib/auth-session";
 import { getCurrentExerciseUrl } from "@/lib/current-exercises-url";
 import { prisma } from "@/lib/prisma";
-import { AlertCircle, ClipboardList, PlusCircle } from "lucide-react";
+import { AlertCircle, ClipboardList, Plus, PlusCircle } from "lucide-react";
 import { revalidatePath } from "next/cache";
 
 export default async function ProjectsPage() {
@@ -78,6 +78,7 @@ export default async function ProjectsPage() {
         </CardHeader>
         <CardContent>
           <form
+            className="space-y-2 flex flex-col"
             action={async (formData) => {
               "use server";
               const name = formData.get("name") as string;
@@ -92,7 +93,7 @@ export default async function ProjectsPage() {
               revalidatePath(currentUrl);
             }}
           >
-            <div className="space-y-2">
+            <div className="space-y-2 flex flex-col">
               <label htmlFor="name">Project Name</label>
               <Input
                 id="name"
@@ -101,7 +102,7 @@ export default async function ProjectsPage() {
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 flex flex-col">
               <label htmlFor="description">Description</label>
               <Textarea
                 id="description"
@@ -112,13 +113,13 @@ export default async function ProjectsPage() {
               />
             </div>
 
-            <LoadingButton
-              // forceLoading={isPending}
-              type="submit"
-              className="w-full"
+            <MyLoadingButton
+              className="w-full mt-4"
+              loadingText="Création..."
+              icon={<Plus />}
             >
               Create Project
-            </LoadingButton>
+            </MyLoadingButton>
           </form>
         </CardContent>
       </Card>

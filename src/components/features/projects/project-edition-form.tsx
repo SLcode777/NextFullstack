@@ -1,9 +1,11 @@
 "use client";
 
-import { LoadingButton } from "@/components/form/loading-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RefreshCw, Save } from "lucide-react";
 import { useActionState } from "react";
+import { toast } from "sonner";
+import { MyLoadingButton } from "./my-loading-button";
 import { updateProject } from "./project.edition";
 
 interface UpdateProjectFormProps {
@@ -13,16 +15,30 @@ interface UpdateProjectFormProps {
 }
 
 export function UpdateProjectForm(project: UpdateProjectFormProps) {
-  const [newProject, action, isPending] = useActionState(
-    updateProject,
-    project
-  );
+  const action = async (
+    prevState: UpdateProjectFormProps,
+    formData: FormData
+  ) => {
+    try {
+      const updated = await updateProject(prevState, formData);
+      toast.success("Projet mis à jour avec succès");
+      return updated;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("une erreur est survenue");
+      }
+      return prevState;
+    }
+  };
+
+  const [newProject, formAction] = useActionState(action, project);
 
   console.log("newProject:", newProject);
 
-
   return (
-    <form className="space-y-4" action={action}>
+    <form className="space-y-4" action={formAction}>
       <div className="flex flex-col gap-2">
         <label htmlFor="name">Project Name</label>
         <Input id="name" name="name" defaultValue={project.name} required />
@@ -38,9 +54,14 @@ export function UpdateProjectForm(project: UpdateProjectFormProps) {
         />
       </div>
 
-      <LoadingButton forceLoading={isPending} type="submit" className="w-full">
+      <MyLoadingButton
+        className="w-full"
+        loadingText="Mise à jour..."
+        icon={<Save />}
+        loadingIcon={<RefreshCw className="animate-spin" />}
+      >
         Update Project with Server Action
-      </LoadingButton>
+      </MyLoadingButton>
     </form>
   );
 }
