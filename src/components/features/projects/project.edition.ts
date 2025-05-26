@@ -51,6 +51,7 @@ export const retrieveTasks = async (projectId: string) => {
       title: true,
       description: true,
       status: true,
+      projectId: true,
     },
   });
 
@@ -77,7 +78,7 @@ export const createTaskAction = async (
     projectId: string;
     status: string;
   },
-  formData: FormData
+  formData: FormData,
 ) => {
   const _user = await getRequiredUser();
 
@@ -94,6 +95,8 @@ export const createTaskAction = async (
       status: "PENDING",
     },
   });
+
+  // revalidatePath(currentUrl);
 
   return task;
 };

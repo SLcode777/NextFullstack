@@ -10,5 +10,11 @@ export const TaskList = async ({
 }) => {
   const tasks = await retrieveTasks(projectId);
 
-  return <TaskListDisplay tasks={tasks} currentUrl={currentUrl} />;
+  return (
+    <TaskListDisplay
+      tasks={tasks}
+      currentUrl={currentUrl}
+      projectId={projectId}
+    />
+  );
 };

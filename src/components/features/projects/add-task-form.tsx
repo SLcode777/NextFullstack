@@ -3,44 +3,53 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { toast } from "sonner";
 import { MyLoadingButton } from "./my-loading-button";
 import { createTaskAction } from "./project.edition";
 
 interface AddTaskFormProps {
-  // id: string;
-  title: string;
-  description: string;
   projectId: string;
-  status: string;
 }
 
-export async function AddTaskForm(
-  task: AddTaskFormProps,
-  props: { params: { projectId: string } }
-) {
-  const params = await props.params;
-  const projectId = params.projectId;
+export function AddTaskForm({ projectId }: AddTaskFormProps) {
+  const router = useRouter();
 
-  const action = (prevState: AddTaskFormProps, formData: FormData) => {
+  const action = async (_: unknown, formData: FormData) => {
     try {
-      const created = createTaskAction(prevState, formData);
+      const created = await createTaskAction(
+        {
+          title: "",
+          description: "",
+          projectId,
+          status: "PENDING",
+        },
+        formData
+      );
       toast.success("task created !");
+      router.refresh();
       return created;
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("une erreur est survenue");
-      }
-      return prevState;
+      toast.error(
+        error instanceof Error ? error.message : "Une erreur est survenue"
+      );
+
+      return {
+        title: "",
+        description: "",
+        projectId,
+        status: "PENDING",
+      };
     }
   };
 
-  const [newTask, formAction] = useActionState(action, task);
-
-  console.log(newTask);
+  const [_, formAction] = useActionState(action, {
+    title: "",
+    description: "",
+    projectId,
+    status: "PENDING",
+  });
 
   return (
     <form action={formAction} className="space-y-4 border rounded-2xl p-4">
