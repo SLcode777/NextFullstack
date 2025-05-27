@@ -1,5 +1,5 @@
 import { UpdateProjectForm } from "@/components/features/projects/project-edition-form";
-import { TaskList } from "@/components/features/projects/task-list-server";
+import { OptimisticTaskList } from "@/components/features/projects/task-list-server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getRequiredUser } from "@/lib/auth-session";
 import { getCurrentExerciseUrl } from "@/lib/current-exercises-url";
@@ -46,7 +46,7 @@ export default async function ProjectDetailsPage(props: {
           </div>
         </CardHeader>
       </Card>
-      <TaskList projectId={project.id} currentUrl={currentUrl} />
+      <OptimisticTaskList projectId={project.id} currentUrl={currentUrl} />
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
