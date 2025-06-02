@@ -78,7 +78,7 @@ export const createTaskAction = async (
     projectId: string;
     status: string;
   },
-  formData: FormData,
+  formData: FormData
 ) => {
   const _user = await getRequiredUser();
 

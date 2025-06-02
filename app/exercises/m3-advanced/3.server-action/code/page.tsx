@@ -1,3 +1,4 @@
+import { CreateSafeProjectForm } from "@/components/features/projects/create-safeproject-form";
 import { MyLoadingButton } from "@/components/features/projects/my-loading-button";
 import { ProjectCard } from "@/components/features/projects/project-card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -67,6 +68,8 @@ export default async function ProjectsPage() {
           )}
         </CardContent>
       </Card>
+
+      <CreateSafeProjectForm />
 
       <Card>
         <CardHeader>
