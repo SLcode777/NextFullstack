@@ -1,16 +1,11 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { z } from "zod";
+import { FormSchema } from "@/lib/product.schema";
 import { userAction } from "./safe-action";
 
 export const createProjectAction = userAction
-  .schema(
-    z.object({
-      name: z.string().min(1),
-      description: z.string().min(1),
-    })
-  )
+  .schema(FormSchema)
   .action(async ({ parsedInput, ctx }) => {
     const { name, description } = parsedInput;
     const user = ctx.user;

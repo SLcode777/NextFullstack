@@ -17,7 +17,6 @@ const createProjectServerAction = async (
 const createProjectSchema = z.object({
   name: z.string().min(1, "le nom est requis"),
   description: z.string().min(1, "la description est requise"),
-  userId: z.string(),
 });
 
 export const createProjectSafeAction = authActionClient
