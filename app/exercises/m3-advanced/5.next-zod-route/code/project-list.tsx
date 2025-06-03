@@ -6,31 +6,46 @@ import { getCurrentExerciseUrlClient } from "@/lib/current-exercices-url-client"
 import { Project } from "@prisma/client";
 import { Loader } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+function useDebounceValue<T>(value: T, delay = 1000) {
+  const [debounceState, setDebounceState] = useState<T>(value);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebounceState(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [value]);
+
+  return debounceState;
+}
 
 export const ProjectList = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState<Project[]>([]);
   const [query, setQuery] = useState("");
+  const debounceQuery = useDebounceValue(query, 500);
 
-  type ProjectType = typeof projects;
+  console.log(debounceQuery);
 
   useEffect(() => {
     setLoading(true);
-    fetch(`${getCurrentExerciseUrlClient()}/api/projects`)
-      .then((res) => res.json())
+    fetch(
+      `${getCurrentExerciseUrlClient()}/api/projects?query=${debounceQuery}`
+    )
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        toast.error("invalid request");
+      })
       .then(({ projects }) => setProjects(projects))
       .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
-    return <Loader className="animate-spin" />;
-  }
-
-  const filteredProjects = (arr: ProjectType[], query: string) => {
-    return arr.filter((project) =>
-      project.name.toLowerCase().includes(query.toLowerCase())
-    );
-  };
+  }, [debounceQuery]);
 
   return (
     <div className="grid gap-4">
@@ -39,19 +54,19 @@ export const ProjectList = () => {
         placeholder="rechercher par nom"
         onChange={(e) => {
           setQuery(e.target.value);
-          console.log(query);
         }}
       />
-      {filteredProjects(projects, query).map((p) => (
-        <ProjectCard
-          key={p.id}
-          {...p}
-          currentUrl={getCurrentExerciseUrlClient()}
-        />
-      ))}
+      {loading ? (
+        <Loader className="animate-spin" />
+      ) : (
+        projects.map((p) => (
+          <ProjectCard
+            key={p.id}
+            {...p}
+            currentUrl={getCurrentExerciseUrlClient()}
+          />
+        ))
+      )}
     </div>
   );
 };
-
-
-//##step 1 à terminer, j'ai le champ query qui fonctionne mais pas en utilisant les params

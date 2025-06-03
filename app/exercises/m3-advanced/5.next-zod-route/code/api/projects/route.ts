@@ -1,14 +1,20 @@
 import { prisma } from "@/lib/prisma";
-import { route } from "../../zod-route";
-import { getRequiredUser } from "@/lib/auth-session";
+import { z } from "zod";
+import { userRoute } from "../../zod-route";
 
-export const GET = route.handler(async (req, context) => {
-  const user = await getRequiredUser();
 
-  const projects = await prisma.project.findMany({
-    where: {
-      userId: user.id,
-    },
+
+export const GET = userRoute
+  .query(z.object({ query: z.string().optional() }))
+  .handler(async (req, context) => {
+    const projects = await prisma.project.findMany({
+      where: {
+        userId: context.ctx.user.id,
+        name: {
+          contains: context.query.query,
+          mode: "insensitive",
+        },
+      },
+    });
+    return { projects };
   });
-  return { projects };
-});

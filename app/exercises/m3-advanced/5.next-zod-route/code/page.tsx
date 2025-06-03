@@ -5,13 +5,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getCurrentExerciseUrl } from "@/lib/current-exercises-url";
 import { ClipboardList, PlusCircle } from "lucide-react";
 import { CreateProjectForm } from "./create-project-form";
 import { ProjectList } from "./project-list";
 
 export default async function ProjectsPage() {
-  const currentUrl = await getCurrentExerciseUrl();
 
   return (
     <div className="space-y-6">
