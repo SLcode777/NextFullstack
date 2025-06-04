@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useUserAgentStore } from "./user-agent-store";
 
 export function UserAgentDisplay() {
   // Utilise le Store
-  const userAgent = undefined as any;
+  const userAgent = useUserAgentStore((s) => s.userAgent);
 
   if (!userAgent) {
     return <div>Loading user agent information...</div>;

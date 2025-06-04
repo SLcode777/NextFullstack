@@ -16,20 +16,26 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { create } from "zustand";
 
 // 🦁 Créer un store Zustand qui stock un state pour savoir si la dialog est ouverte ou fermée
 // 🦁 Avec une méthode pour ouvrir et une méthode pour fermer la dialog
-// 🦁 Export uniquement la méthode pour ouvrir la dialog avec `getState().openPlanDialog`
+export const useDialogStore = create<{ open: boolean }>(() => ({
+  open: false,
+}));
 
-export const PlanDialog = (props: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-}) => {
+// 🦁 Export uniquement la méthode pour ouvrir la dialog avec `getState().openPlanDialog`
+export const openDialogStore = () => useDialogStore.setState({ open: true });
+const closeDialogStore = () => useDialogStore.setState({ open: false });
+
+export const PlanDialog = () => {
   // 🦁 Utilise le store Zustand pour ouvrir et fermer la dialog
+
+  const open = useDialogStore((s) => s.open);
 
   return (
     // 🦁 Utilise le state retourner par le store Zustand
-    <Dialog open={props.open} onOpenChange={props.setOpen}>
+    <Dialog open={open} onOpenChange={() => closeDialogStore()}>
       <DialogContent className="max-w-2xl w-full p-0">
         <CardHeader className="border-b">
           <DialogTitle>Choose Your Plan</DialogTitle>
@@ -80,7 +86,7 @@ export const PlanDialog = (props: {
           </Card>
         </CardContent>
         <DialogFooter className="justify-end border-t pt-4 px-6 pb-6">
-          <Button onClick={() => props.setOpen(false)} variant="outline">
+          <Button onClick={() => closeDialogStore()} variant="outline">
             Close
           </Button>
         </DialogFooter>

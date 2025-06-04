@@ -1,4 +1,4 @@
-import { CreateProjectForm } from "@/components/features/projects/create-project-form";
+import { CreateSafeProjectForm } from "@/components/features/projects/create-safeproject-form";
 import { ProjectCard } from "@/components/features/projects/project-card";
 import { LoadingButton } from "@/components/form/loading-button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -12,95 +12,11 @@ import {
 import { getRequiredUser } from "@/lib/auth-session";
 import { getCurrentExerciseUrl } from "@/lib/current-exercises-url";
 import { prisma } from "@/lib/prisma";
-import { format, isSameDay, startOfDay, subDays } from "date-fns";
-import { AlertCircle, ClipboardList } from "lucide-react";
+import { AlertCircle, ClipboardList, Loader } from "lucide-react";
 import { revalidatePath } from "next/cache";
+import { Suspense } from "react";
+import { getProjectData } from "./data";
 import { ProjectChartCard } from "./project-chart-card";
-import { ProjectWithDate } from "./types";
-
-function getDaysLabels(numberOfDays: number): string[] {
-  const days = [];
-  const today = new Date();
-
-  for (let i = numberOfDays - 1; i >= 0; i--) {
-    const date = subDays(today, i);
-    days.push(format(date, "dd MMM"));
-  }
-
-  return days;
-}
-
-function getProjectDataByDay(
-  projects: { createdAt: Date }[],
-  numberOfDays: number
-): ProjectWithDate[] {
-  const days = getDaysLabels(numberOfDays);
-  const today = new Date();
-
-  const dailyData = days.map((day, index) => {
-    const date = subDays(today, numberOfDays - 1 - index);
-    const startDay = startOfDay(date);
-
-    const projectsInDay = projects.filter((project) =>
-      isSameDay(project.createdAt, startDay)
-    );
-
-    return {
-      day,
-      count: projectsInDay.length,
-    };
-  });
-
-  return dailyData;
-}
-
-function calculateTrendPercentage(data: ProjectWithDate[]): number {
-  if (data.length < 2) return 0;
-
-  // Compare last 5 days with previous 5 days
-  const recentDays = data.slice(-5);
-  const previousDays = data.slice(-10, -5);
-
-  const recentSum = recentDays.reduce((sum, day) => sum + day.count, 0);
-  const previousSum = previousDays.reduce((sum, day) => sum + day.count, 0);
-
-  if (previousSum === 0) return recentSum > 0 ? 100 : 0;
-
-  const percentage = ((recentSum - previousSum) / previousSum) * 100;
-  return Math.round(percentage);
-}
-
-async function getProjectData(userId: string, numberOfDays: number) {
-  // ℹ️ Cette méthode peut prendre beaucoup de temps à charger.
-  // 🦁 Créons un nouveau composant qui s'occupe d'afficher et de récupérer les données qu'on va pouvoir <Suspense />
-
-  // Simulation d'une application de production qui a besoin de temps pour charger les données.
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-  const allProjects = await prisma.project.findMany({
-    where: {
-      userId: userId,
-      createdAt: {
-        gte: subDays(new Date(), numberOfDays),
-      },
-    },
-  });
-
-  const projectData = getProjectDataByDay(allProjects, numberOfDays);
-  const trendPercentage = calculateTrendPercentage(projectData);
-
-  const today = new Date();
-  const startDate = subDays(today, numberOfDays - 1);
-  const dateRange = {
-    start: startOfDay(startDate),
-    end: today,
-  };
-
-  return {
-    projectData,
-    trendPercentage,
-    dateRange,
-  };
-}
 
 export default async function ProjectsPage() {
   const user = await getRequiredUser();
@@ -130,11 +46,13 @@ export default async function ProjectsPage() {
 
   return (
     <div className="space-y-6">
-      <ProjectChartCard
-        projectData={projectData}
-        trendPercentage={trendPercentage}
-        dateRange={dateRange}
-      />
+      <Suspense fallback={<Loader className="animate-spin" />}>
+        <ProjectChartCard
+          projectData={projectData}
+          trendPercentage={trendPercentage}
+          dateRange={dateRange}
+        />
+      </Suspense>
 
       <Card className="w-full">
         <CardHeader>
@@ -192,7 +110,7 @@ export default async function ProjectsPage() {
           <CardTitle>Create Project</CardTitle>
         </CardHeader>
         <CardContent>
-          <CreateProjectForm />
+          <CreateSafeProjectForm />
         </CardContent>
       </Card>
     </div>

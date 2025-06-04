@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { InjectUserAgent } from "./user-agent-store";
 import { userAgent } from "next/server";
 
 export default async function Layout({
@@ -9,5 +10,10 @@ export default async function Layout({
   const headersList = await headers();
   const userAgentResult = userAgent({ headers: headersList });
   console.log(userAgentResult);
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <InjectUserAgent userAgent={userAgentResult} />
+    </>
+  );
 }

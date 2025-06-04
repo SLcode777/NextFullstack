@@ -8,30 +8,26 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useState } from "react";
-import { PlanDialog } from "./upgrade-dialog";
+import { openDialogStore, PlanDialog } from "./upgrade-dialog";
 
 // Même chose que Content
 const Header = () => {
-  const [open, setOpen] = useState(false);
   return (
     <>
       <header className="border-b">
         <div className="container flex items-center justify-between p-4">
           <h1 className="text-2xl font-bold">My App</h1>
-          <Button onClick={() => setOpen(true)} variant="secondary">
+          <Button onClick={() => openDialogStore()} variant="secondary">
             Upgrade Plan
           </Button>
         </div>
       </header>
-      <PlanDialog open={open} setOpen={setOpen} />
     </>
   );
 };
 
 // Même chose que Content
 const Navigation = () => {
-  const [open, setOpen] = useState(false);
   return (
     <>
       <Card className="h-full rounded-none border-r">
@@ -54,7 +50,7 @@ const Navigation = () => {
                 <p className="text-xs text-muted-foreground">
                   Get access to all features
                 </p>
-                <Button onClick={() => setOpen(true)} className="w-full">
+                <Button onClick={() => openDialogStore()} className="w-full">
                   Upgrade Now
                 </Button>
               </CardContent>
@@ -62,14 +58,12 @@ const Navigation = () => {
           </nav>
         </CardContent>
       </Card>
-      <PlanDialog open={open} setOpen={setOpen} />
     </>
   );
 };
 
 const Content = () => {
   // 🦁 Supprime le state
-  const [open, setOpen] = useState(false);
   return (
     <>
       <main className="flex-1">
@@ -86,13 +80,13 @@ const Content = () => {
                 This is your content area. You're currently on the free plan.
               </p>
               {/* 🦁 Remplace par l'export de la méthode openPlanDialog */}
-              <Button onClick={() => setOpen(true)}>See Premium Plans</Button>
+              <Button onClick={() => openDialogStore()}>
+                See Premium Plans
+              </Button>
             </CardContent>
           </Card>
         </div>
       </main>
-      {/* 🦁 Supprime PlanDialog */}
-      <PlanDialog open={open} setOpen={setOpen} />
     </>
   );
 };
@@ -106,6 +100,7 @@ export default function Page() {
         <Content />
       </div>
       {/* 🦁 Ajoute PlanDialog ici */}
+      <PlanDialog />
     </div>
   );
 }
