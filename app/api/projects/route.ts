@@ -24,5 +24,7 @@ export const GET = userRoute
       },
     });
 
+    console.log("console log in prisma query route", { projects });
+
     return { projects };
   });

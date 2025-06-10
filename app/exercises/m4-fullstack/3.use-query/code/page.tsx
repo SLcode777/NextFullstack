@@ -1,9 +1,12 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlusCircle } from "lucide-react";
 import { CreateProjectForm } from "./create-project-form";
 import { ProjectsList } from "./projects-list";
 
-export default async function ProjectsPage() {
+export default function ProjectsPage() {
+
   return (
     <div className="space-y-6">
       <ProjectsList />
