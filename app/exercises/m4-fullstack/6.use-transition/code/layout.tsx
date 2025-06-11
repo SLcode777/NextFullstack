@@ -5,7 +5,7 @@ import { Loader } from "@/components/ui/loader";
 import { getCurrentExerciseUrlClient } from "@/lib/current-exercices-url-client";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useTransition } from "react";
 
 export default function ProjectsPage(props: PropsWithChildren) {
   return (
@@ -29,15 +29,17 @@ export default function ProjectsPage(props: PropsWithChildren) {
 const Route = ({ href, children }: PropsWithChildren<{ href: string }>) => {
   const router = useRouter();
   // 🦁 Ajoute useTransition
-  const currentUrl = getCurrentExerciseUrlClient();
-  const isPending = false;
+  const [isPending, startTransition] = useTransition();
 
+  const currentUrl = getCurrentExerciseUrlClient();
   return (
     <li className="w-full">
       <button
         onClick={() => {
           // 🦁 Utilise startTransition pour faire le push
-          router.push(currentUrl + href);
+          startTransition(() => {
+            router.push(currentUrl + href);
+          });
         }}
         className={cn(
           "border w-full rounded-md hover:bg-accent justify-between px-4 py-2 cursor-pointer flex items-center gap-2",

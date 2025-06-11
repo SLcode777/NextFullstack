@@ -1,20 +1,31 @@
-import { CreateProjectForm } from "@/components/features/projects/create-project-form";
 import { ProjectCard } from "@/components/features/projects/project-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getRequiredUser } from "@/lib/auth-session";
 import { getCurrentExerciseUrl } from "@/lib/current-exercises-url";
 import { prisma } from "@/lib/prisma";
 import { PlusCircle } from "lucide-react";
+import { parseAsString, SearchParams } from "nuqs";
+import { createSearchParamsCache } from "nuqs/server";
+import { CreateProjectForm } from "../../3.use-query/code/create-project-form";
 import { SearchInput } from "./search-input";
 // Note: import from 'nuqs/server' to avoid the "use client" directive
 
 // 🦁 Créer un searchParamsCache pour la page
+export const searchParamsCache = createSearchParamsCache({
+  // List your search param keys and associated parsers here:
+  q: parseAsString,
+});
 
-export default async function ProjectsPage() {
+interface PageProps {
+  searchParams: Promise<SearchParams>;
+}
+
+export default async function ProjectsPage(props: PageProps) {
   const user = await getRequiredUser();
   const currentUrl = await getCurrentExerciseUrl();
   // 🦁 Remplace par le `q` du searchParams
-  const query = "";
+  const searchParams = await searchParamsCache.parse(props.searchParams);
+  const query = searchParams.q;
 
   const projects = await prisma.project.findMany({
     where: {

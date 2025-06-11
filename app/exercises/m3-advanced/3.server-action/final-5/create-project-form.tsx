@@ -59,7 +59,12 @@ export const CreateProjectForm = () => {
         />
       </div>
 
-      <LoadingButton forceLoading={isPending} type="submit" className="w-full">
+      <LoadingButton
+        variant={"secondary"}
+        forceLoading={isPending}
+        type="submit"
+        className="w-full"
+      >
         Create Project
       </LoadingButton>
     </form>

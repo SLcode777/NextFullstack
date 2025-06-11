@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "sonner";
 import "./globals.css";
 import Providers from "./providers";
@@ -50,7 +51,7 @@ export default function RootLayout({
 
               <main className="mt-4 lg:mt-6 flex flex-col gap-4">
                 <PathnameBreadcrumb />
-                {children}
+                <NuqsAdapter>{children}</NuqsAdapter>
               </main>
             </div>
             <Toaster />
